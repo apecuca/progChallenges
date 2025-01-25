@@ -4,13 +4,21 @@
 
 int main()
 {
-	std::vector<Vertex> dataA = math3d::LoadVertexFile("../resources/points_normals_0.txt");
-	std::vector<Vertex> dataB = math3d::LoadVertexFile("../resources/points_normals_1.txt");
+	// Data sets
+	std::vector<utils::Vertex> dataA = math3d::LoadVertexFile("../resources/points_normals_0.txt");
+	std::vector<utils::Vertex> dataB = math3d::LoadVertexFile("../resources/points_normals_1.txt");
 	
-	BoundingBox bbA = math3d::CalculateBoundingBox(dataA);
-	BoundingBox bbB = math3d::CalculateBoundingBox(dataB);
-	PrintBoundingBox(bbA, true);
-	PrintBoundingBox(bbB, true);
+	// 1 Calculate bounding boxes
+	utils::BoundingBox bbA = math3d::CalculateBoundingBox(dataA);
+	utils::BoundingBox bbB = math3d::CalculateBoundingBox(dataB);
+
+	// 1.a Print bounding boxes
+	utils::PrintBoundingBox(bbA, true);
+	utils::PrintBoundingBox(bbB, true);
+
+	// 1.b Calculate intersection volume
+	std::string intersecVol = math3d::CalculateIntersectionVol(bbA, bbB);
+	std::cout << intersecVol << "\n\n";
 
 	return 0;
 }

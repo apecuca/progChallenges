@@ -4,16 +4,13 @@ In the directory, there are two CSV files that contain 3D points and 3D normals.
 
 1. Generate an axis aligned bounding box of both datasets.
 a. Print out the results (Format: Min: x y z | Max: x y z)
-b. (Bonus) Calculate the intersection volume between DataA and DataB. Print out
-that value.
+b. (Bonus) Calculate the intersection volume between DataA and DataB. Print out that value.
 
 2. Write a separate function that for each point in DataA, find the closest points in DataB and return vector(s) of that association and with the distances.
-a. Find and print out the shortest distance (and the point pair). ONLY THE shortest
-distance, not all evaluated distances!
+a. Find and print out the shortest distance (and the point pair). ONLY THE shortest distance, not all evaluated distances!
 
 3. Remove all points from DataB (store as DataB2) which have not been assigned to a pair with DataA during step 2 (consider closest first point only).
 a. Print out the number of removed points.
-Polyga | Confidential - Intended Recipient Only
 
 4. Modify the algorithm so that you can optionally only find points that are also facing the same direction. Each target point can only be assigned once. Consider a maximum angle difference of 20°
 

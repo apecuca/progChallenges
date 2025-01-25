@@ -91,24 +91,30 @@ namespace utils
 
 	}; // Bounding box
 
-	void PrintVector(const Vector3& vector, bool doubleBrake)
+	static void PrintNumber(const double& vl, bool doubleBrake)
+	{
+		std::cout << "Double: " << vl;
+		if (doubleBrake) std::cout << "\n";
+	} // Print number (FLOAT)
+
+	static void PrintVector(const Vector3& vector, bool doubleBrake)
 	{
 		std::cout << "Vector3(" << vector.x << ", " << vector.y << ", " << vector.z << ")\n";
 		if (doubleBrake) std::cout << "\n";
 	} // Print vector
 
-	void PrintVertex(const Vertex& vertex, bool doubleBrake)
+	static void PrintVertex(const Vertex& vertex, bool doubleBrake)
 	{
 		std::cout << "Point: " << vertex.point.x << ", " << vertex.point.y << ", " << vertex.point.z << "\n";
 		std::cout << "Normal: " << vertex.normal.x << ", " << vertex.normal.y << ", " << vertex.normal.z << "\n";
 		if (doubleBrake) std::cout << "\n";
 	} // print vertex
 
-	void PrintBoundingBox(const BoundingBox& boundbox, bool doubleBrake)
+	static void PrintBoundingBox(const BoundingBox& boundbox, bool doubleBrake)
 	{
 		std::cout << "Min: ";
 		PrintVector(boundbox.min, false);
-		std::cout << "Max ";
+		std::cout << "Max: ";
 		PrintVector(boundbox.max, doubleBrake);
 	} // Print bounding box
 

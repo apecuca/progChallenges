@@ -5,16 +5,15 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <algorithm>
 
 // Classes
 #include "utils.hpp"
 
-using namespace utils;
-
 namespace math3d
 {
 	
-	std::vector<Vertex> LoadVertexFile(const char* filePath)
+	std::vector<utils::Vertex> LoadVertexFile(const char* filePath)
 	{
 		std::ifstream file(filePath);
 
@@ -43,13 +42,13 @@ namespace math3d
 
 		// Create array to store vertex data and
 		// reserve space to minimize copies
-		std::vector<Vertex> vertexData;
+		std::vector<utils::Vertex> vertexData;
 		vertexData.reserve((points.size() / 3) / 2);
 
 		// Temp data for loop
 		int loopSteps = 0;
-		Vector3 tempPoint = Vector3(0.0f);
-		Vector3 tempNormal = Vector3(0.0f);
+		utils::Vector3 tempPoint = utils::Vector3(0.0f);
+		utils::Vector3 tempNormal = utils::Vector3(0.0f);
 
 		for (int i = 0; i < points.size(); i++)
 		{
@@ -76,11 +75,11 @@ namespace math3d
 		return vertexData;
 	} // Load vertex file
 
-	BoundingBox CalculateBoundingBox(const std::vector<Vertex> data)
+	utils::BoundingBox CalculateBoundingBox(const std::vector<utils::Vertex>& data)
 	{
 		// Temp min and max points
-		Vector3 min = Vector3(data.at(0).point);
-		Vector3 max = Vector3(data.at(0).point);
+		utils::Vector3 min = utils::Vector3(data.at(0).point);
+		utils::Vector3 max = utils::Vector3(data.at(0).point);
 
 		// Save min and max points
 		for (int i = 0; i < data.size(); i++)
@@ -94,9 +93,28 @@ namespace math3d
 		}
 
 		// Allocate and return bounds
-		BoundingBox bounds = BoundingBox(min, max);
+		utils::BoundingBox bounds = utils::BoundingBox(min, max);
 
 		return bounds;
 	} // Calculate bounding box
+
+	std::string CalculateIntersectionVol(const utils::BoundingBox& a, const utils::BoundingBox& b)
+	{
+		// Clamping to 0 the subtraction of the min and max possible values
+		// This gives us the overlapping between two points in one dimension
+		double x_overlap = std::max(0.0f, std::min(a.max.x, b.max.x) - std::max(a.min.x, b.min.x));
+		double y_overlap = std::max(0.0f, std::min(a.max.y, b.max.y) - std::max(a.min.y, b.min.y));
+		double z_overlap = std::max(0.0f, std::min(a.max.z, b.max.z) - std::max(a.min.z, b.min.z));
+
+		// Then, calculate the volume by multiplying the 3 dimensions
+
+		// Turning to string because the console doesn't want to
+		// print a number this big, for some reason
+		std::string intersecVol = std::to_string(x_overlap * y_overlap * z_overlap);
+		// In square meters because it's fancyyyyy
+		intersecVol += "m2";
+
+		return intersecVol;
+	}
 
 }; // Namespace
