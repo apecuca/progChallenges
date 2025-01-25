@@ -44,6 +44,18 @@ namespace utils
 		// Values
 		float x, y, z;
 
+		// Functions
+		static float Distance(const Vector3& a, const Vector3& b)
+		{
+			//d = sqrt[(x2 - x1)² + (y2 - y1)² + (z2 - z1)²]
+			float d = ((b.x - a.x) * (b.x - a.x));
+			d += ((b.y - a.y) * (b.y - a.y));
+			d += ((b.z - a.z) * (b.z - a.z));
+			d = std::sqrt(d);
+
+			return d;
+		}
+
 	}; // Vector3
 
 	class Vertex
@@ -91,31 +103,38 @@ namespace utils
 
 	}; // Bounding box
 
-	static void PrintNumber(const double& vl, bool doubleBrake)
-	{
-		std::cout << "Double: " << vl;
-		if (doubleBrake) std::cout << "\n";
-	} // Print number (FLOAT)
-
-	static void PrintVector(const Vector3& vector, bool doubleBrake)
+	static void Print(const Vector3& vector, bool doubleBrake)
 	{
 		std::cout << "Vector3(" << vector.x << ", " << vector.y << ", " << vector.z << ")\n";
 		if (doubleBrake) std::cout << "\n";
-	} // Print vector
+	} // Print VECTOR
 
-	static void PrintVertex(const Vertex& vertex, bool doubleBrake)
+	static void Print(const BoundingBox& boundbox, bool doubleBrake)
+	{
+		std::cout << "Min: ";
+		Print(boundbox.min, false);
+		std::cout << "Max: ";
+		Print(boundbox.max, doubleBrake);
+	} // Print BOUNDING BOX
+
+	static void Print(const Vertex& vertex, bool doubleBrake)
 	{
 		std::cout << "Point: " << vertex.point.x << ", " << vertex.point.y << ", " << vertex.point.z << "\n";
 		std::cout << "Normal: " << vertex.normal.x << ", " << vertex.normal.y << ", " << vertex.normal.z << "\n";
 		if (doubleBrake) std::cout << "\n";
-	} // print vertex
+	} // Print VERTEX
 
-	static void PrintBoundingBox(const BoundingBox& boundbox, bool doubleBrake)
+	static void Print(const std::string& text, bool doubleBrake)
 	{
-		std::cout << "Min: ";
-		PrintVector(boundbox.min, false);
-		std::cout << "Max: ";
-		PrintVector(boundbox.max, doubleBrake);
-	} // Print bounding box
+		std::cout << text << "\n";
+		if (doubleBrake) std::cout << "\n";
+	} // Print STRING
+
+	/* EXAMPLE TO COPY
+	static void Print(const TYPE& name, bool doubleBrake)
+	{
+
+	} // Print TYPE
+	*/
 
 } // namespace

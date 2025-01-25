@@ -13,12 +13,14 @@ int main()
 	utils::BoundingBox bbB = math3d::CalculateBoundingBox(dataB);
 
 	// 1.a Print bounding boxes
-	utils::PrintBoundingBox(bbA, true);
-	utils::PrintBoundingBox(bbB, true);
+	utils::Print(bbA, true);
+	utils::Print(bbB, true);
 
 	// 1.b Calculate intersection volume
 	std::string intersecVol = math3d::CalculateIntersectionVol(bbA, bbB);
-	std::cout << intersecVol << "\n\n";
+	utils::Print(intersecVol, true);
+
+	
 
 	return 0;
 }

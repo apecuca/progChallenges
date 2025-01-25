@@ -101,7 +101,7 @@ namespace math3d
 	std::string CalculateIntersectionVol(const utils::BoundingBox& a, const utils::BoundingBox& b)
 	{
 		// Clamping to 0 the subtraction of the min and max possible values
-		// This gives us the overlapping between two points in one dimension
+		// This results in the overlapping between two points in one dimension
 		double x_overlap = std::max(0.0f, std::min(a.max.x, b.max.x) - std::max(a.min.x, b.min.x));
 		double y_overlap = std::max(0.0f, std::min(a.max.y, b.max.y) - std::max(a.min.y, b.min.y));
 		double z_overlap = std::max(0.0f, std::min(a.max.z, b.max.z) - std::max(a.min.z, b.min.z));
