@@ -47,7 +47,6 @@ namespace utils
 		// Functions
 		static float Distance(const Vector3& a, const Vector3& b)
 		{
-			//d = sqrt[(x2 - x1)² + (y2 - y1)² + (z2 - z1)²]
 			float d = ((b.x - a.x) * (b.x - a.x));
 			d += ((b.y - a.y) * (b.y - a.y));
 			d += ((b.z - a.z) * (b.z - a.z));
@@ -102,6 +101,46 @@ namespace utils
 		Vector3 min, max;
 
 	}; // Bounding box
+
+	class VectorsDistance
+	{
+	public:
+		// Base constructor
+		VectorsDistance()
+		{
+			pointA = Vector3();
+			pointB = Vector3();
+			indexA = 0;
+			indexB = 0;
+			distance = std::numeric_limits<float>::infinity();
+		}
+
+		// Value constructor
+		VectorsDistance(const Vector3& pA, const Vector3& pB, 
+			const int& iA, const int& iB, const float& dist)
+		{
+			pointA = pA;
+			pointB = pB;
+			indexA = iA;
+			indexB = iB;
+			distance = dist;
+		}
+
+		// Copy constructor
+		VectorsDistance(const VectorsDistance& other)
+		{
+			pointA = other.pointA;
+			pointB = other.pointB;
+			indexA = other.indexA;
+			indexB = other.indexB;
+			distance = other.distance;
+		}
+
+		// Values
+		Vector3 pointA, pointB;
+		int indexA, indexB;
+		float distance;
+	}; // Vector distance
 
 	static void Print(const Vector3& vector, bool doubleBrake)
 	{

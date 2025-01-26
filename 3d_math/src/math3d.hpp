@@ -13,7 +13,9 @@
 namespace math3d
 {
 	
-	std::vector<utils::Vertex> LoadVertexFile(const char* filePath)
+	// Emplacing directly on the data vector
+	// reduce copies
+	void LoadVertexFile(const char* filePath, std::vector<utils::Vertex>& dataArray)
 	{
 		std::ifstream file(filePath);
 
@@ -42,8 +44,9 @@ namespace math3d
 
 		// Create array to store vertex data and
 		// reserve space to minimize copies
-		std::vector<utils::Vertex> vertexData;
-		vertexData.reserve((points.size() / 3) / 2);
+		//std::vector<utils::Vertex> vertexData;
+		//vertexData.reserve((points.size() / 3) / 2);
+		dataArray.reserve((points.size() / 3) / 2);
 
 		// Temp data for loop
 		int loopSteps = 0;
@@ -67,12 +70,13 @@ namespace math3d
 			if (loopSteps == 6)
 			{
 				// emplace new vertex with current data
-				vertexData.emplace_back(tempPoint, tempNormal);
+				//vertexData.emplace_back(tempPoint, tempNormal);
+				dataArray.emplace_back(tempPoint, tempNormal);
 				loopSteps = 0;
 			}
 		}
 
-		return vertexData;
+		//return vertexData;
 	} // Load vertex file
 
 	utils::BoundingBox CalculateBoundingBox(const std::vector<utils::Vertex>& data)
@@ -115,6 +119,55 @@ namespace math3d
 		intersecVol += "m2";
 
 		return intersecVol;
-	}
+	} // Calculate intersection volume
+
+	utils::VectorsDistance FindClosestPair(const std::vector<utils::VectorsDistance>& dataset)
+	{
+		utils::VectorsDistance closestPair =  utils::VectorsDistance();
+
+		for (int i = 0; i < dataset.size(); i++)
+		{
+			if (dataset[i].distance > closestPair.distance) continue;
+
+			// Update closest pair
+			closestPair = dataset[i];
+		}
+
+		return closestPair;
+	} // Closest pair in one dataset
+
+	void FindClosestPairs(const std::vector<utils::Vertex>& dataA, 
+		const std::vector<utils::Vertex>& dataB, std::vector<utils::VectorsDistance>& output)
+	{
+		// Nested loop
+		for (int a = 0; a < dataA.size(); a++)
+		{
+			// Temporary object for comparisons
+			utils::VectorsDistance tempComparison = utils::VectorsDistance();
+
+			// Update A temp vars
+			tempComparison.pointA = dataA[a].point;
+			tempComparison.indexA = a;
+
+			// dataB loop
+			for (int b = 0; b < dataB.size(); b++)
+			{
+				// Current comparison distance
+				float dist = utils::Vector3::Distance(tempComparison.pointA, dataB[b].point);
+
+				// Ignore if the distance is greater than the current
+				if (dist > tempComparison.distance) continue;
+
+				// if not, update everything
+				tempComparison.pointB = dataB[b].point;
+				tempComparison.indexB = b;
+				tempComparison.distance = dist;
+			} // B loop
+
+			// Push to output
+			output.emplace_back(tempComparison);
+
+		} // A nested loop
+	} // Find closest pairs with two datasets
 
 }; // Namespace
