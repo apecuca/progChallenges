@@ -41,6 +41,16 @@ namespace utils
 			z = other.z;
 		}
 
+		// Comparison operator
+		bool operator == (const Vector3& other)
+		{
+			if (other.x == x &&
+				other.y == y &&
+				other.z == z) return true;
+			else return false;
+
+		}
+
 		// Values
 		float x, y, z;
 
@@ -65,18 +75,21 @@ namespace utils
 		{
 			point = Vector3(0.0f);
 			normal = Vector3(0.0f);
+			index = 0;
 		};
 
 		// Copy constructor
-		Vertex(const Vector3& _point, const Vector3& _normal)
+		Vertex(const Vector3& _point, const Vector3& _normal, const int& _index)
 		{
 			point = _point;
 			normal = _normal;
+			index = _index;
 		};
 
 		// Values
 		Vector3 point;
 		Vector3 normal;
+		int index;
 
 	}; // Vertex
 

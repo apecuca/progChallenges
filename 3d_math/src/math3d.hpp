@@ -44,12 +44,11 @@ namespace math3d
 
 		// Create array to store vertex data and
 		// reserve space to minimize copies
-		//std::vector<utils::Vertex> vertexData;
-		//vertexData.reserve((points.size() / 3) / 2);
 		dataArray.reserve((points.size() / 3) / 2);
 
 		// Temp data for loop
 		int loopSteps = 0;
+		int emplacedPoints = 0;
 		utils::Vector3 tempPoint = utils::Vector3(0.0f);
 		utils::Vector3 tempNormal = utils::Vector3(0.0f);
 
@@ -71,12 +70,92 @@ namespace math3d
 			{
 				// emplace new vertex with current data
 				//vertexData.emplace_back(tempPoint, tempNormal);
-				dataArray.emplace_back(tempPoint, tempNormal);
+				dataArray.emplace_back(tempPoint, tempNormal, emplacedPoints);
 				loopSteps = 0;
+				emplacedPoints++;
 			}
 		}
 
-		//return vertexData;
+		// Shrink vector to free unused memory
+		// In this case, it's not necessary since we allocated
+		// the exact memory we need, above the temporary variables
+		dataArray.shrink_to_fit();
+	} // Load vertex file NO ANGLE
+
+	// Load from file with a specific direction (maximum angle difference of 20)
+	void LoadVertexFile(const char* filePath, std::vector<utils::Vertex>& dataArray,
+		const utils::Vector3& direction)
+	{
+		std::ifstream file(filePath);
+
+		// Reading vars
+		std::vector<float> points;
+		std::string line;
+		std::string numberCell;
+
+		// Ready every line inside the file
+		while (std::getline(file, line))
+		{
+			// Pass the result of the line to a stringstream
+			std::stringstream ss(line);
+
+			// Read the line separated into cells, divided by a comma
+			while (std::getline(ss, numberCell, ',')) {
+				// Parse and push the cells to a point 
+				points.push_back(std::stof(numberCell));
+			}
+		}
+
+		//
+		// I COULD do the following code inside the reading loop,
+		// but it would be too cramped and hard to read
+		//
+
+		// Create array to store vertex data and
+		// reserve space to minimize copies
+		dataArray.reserve((points.size() / 3) / 2);
+
+		// Temp data for loop
+		int loopSteps = 0;
+		int emplacedPoints = 0;
+		utils::Vector3 tempPoint = utils::Vector3(0.0f);
+		utils::Vector3 tempNormal = utils::Vector3(0.0f);
+
+		for (int i = 0; i < points.size(); i++)
+		{
+			// Easier to read than a switch.
+			// Since the array containing the values is sequencial,
+			// the order will ALWAYS be this, as long as the file
+			// is in the correct format (and they are)
+			if (loopSteps == 0) tempPoint.x = points[i];
+			else if (loopSteps == 1) tempPoint.y = points[i];
+			else if (loopSteps == 2) tempPoint.z = points[i];
+			else if (loopSteps == 3) tempNormal.x = points[i];
+			else if (loopSteps == 4) tempNormal.y = points[i];
+			else if (loopSteps == 5) tempNormal.z = points[i];
+
+			loopSteps++;
+			if (loopSteps == 6)
+			{
+				// Reset loop steps
+				loopSteps = 0;
+
+				// Check for angles, ignore if there is a difference of 20 (0.22)
+				if (std::abs(tempNormal.x - direction.x) > 0.22f) continue;
+				else if (std::abs(tempNormal.y - direction.y) > 0.22f) continue;
+				else if (std::abs(tempNormal.z - direction.z) > 0.22f) continue;
+
+				// emplace new vertex with current data
+				//vertexData.emplace_back(tempPoint, tempNormal);
+				dataArray.emplace_back(tempPoint, tempNormal, emplacedPoints);
+				emplacedPoints++;
+			}
+		}
+
+		// Shrink vector to free unused memory
+		// This time it's needed, since we allocated the full possible 
+		// capacity, not accounting for the ignored ones
+		dataArray.shrink_to_fit();
 	} // Load vertex file
 
 	utils::BoundingBox CalculateBoundingBox(const std::vector<utils::Vertex>& data)
@@ -147,7 +226,7 @@ namespace math3d
 
 			// Update A temp vars
 			tempComparison.pointA = dataA[a].point;
-			tempComparison.indexA = a;
+			tempComparison.indexA = dataA[a].index;
 
 			// dataB loop
 			for (int b = 0; b < dataB.size(); b++)
@@ -160,7 +239,7 @@ namespace math3d
 
 				// if not, update everything
 				tempComparison.pointB = dataB[b].point;
-				tempComparison.indexB = b;
+				tempComparison.indexB = dataB[b].index;
 				tempComparison.distance = dist;
 			} // B loop
 
@@ -168,6 +247,37 @@ namespace math3d
 			output.emplace_back(tempComparison);
 
 		} // A nested loop
+
+		// Deallocate unused memory
+		output.shrink_to_fit();
 	} // Find closest pairs with two datasets
+
+	// Returns a vector containing unused points
+	void RemoveUnusedPoints(const std::vector<utils::Vertex>& base,
+		const std::vector<utils::VectorsDistance>& used, std::vector<utils::Vertex>& output)
+	{
+		// Copy base 
+		output = std::vector<utils::Vertex>(base);
+
+		// Nested loop that passes through both base and used vectors
+		for (int bI = base.size() - 1; bI > 0; bI--) {
+			for (int uI = 0; uI < used.size(); uI++)
+			{
+				// If the indexes don't match, ignore
+				if (used[uI].indexB != output[bI].index) continue;
+
+				// Erase from output vector
+				output.erase(output.begin() + bI);
+
+				// Finish used vector loop
+				uI = used.size();
+			}
+		}
+
+		// Deallocate unused memory
+		// Not necessary, but good practice (I think xd)
+		output.shrink_to_fit();
+
+	} // Remove unused points
 
 }; // Namespace
